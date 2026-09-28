@@ -1,0 +1,88 @@
+// 架空の課金スキーマ（評価用）
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
+
+model Organization {
+  id            String   @id @default(cuid())
+  name          String
+  planCode      String   @default("free")
+  createdAt     DateTime @default(now())
+  projects      Project[]
+  subscriptions Subscription[]
+  billingProfile BillingProfile?
+}
+
+model Project {
+  id             String    @id @default(cuid())
+  organizationId String
+  name           String
+  deletedAt      DateTime?
+  suspendedAt    DateTime?
+  organization   Organization @relation(fields: [organizationId], references: [id])
+}
+
+model BillingProfile {
+  id             String  @id @default(cuid())
+  organizationId String  @unique
+  stripeCustomerId String
+  cardLast4      String?
+  cardExpMonth   Int?
+  cardExpYear    Int?
+  billingName    String?
+  organization   Organization @relation(fields: [organizationId], references: [id])
+}
+
+enum SubscriptionStatus {
+  pending_payment
+  active
+  past_due
+  suspended
+  ended
+}
+
+model Subscription {
+  id              String   @id @default(cuid())
+  organizationId  String
+  projectId       String?
+  status          SubscriptionStatus @default(pending_payment)
+  planCode        String
+  priceJpy        Int
+  anchorDay       Int
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelAtPeriodEnd  Boolean @default(false)
+  pastDueSince    DateTime?
+  createdAt       DateTime @default(now())
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  attempts        BillingAttempt[]
+
+  @@unique([projectId])
+}
+
+enum AttemptStatus {
+  pending
+  charging
+  succeeded
+  failed
+}
+
+model BillingAttempt {
+  id              String   @id @default(cuid())
+  subscriptionId  String
+  periodStart     DateTime
+  amountJpy       Int
+  status          AttemptStatus @default(pending)
+  stripePaymentIntentId String?
+  failureMessage  String?
+  createdAt       DateTime @default(now())
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id])
+
+  @@unique([subscriptionId, periodStart])
+}
+
+model WebhookEvent {
+  id         String   @id
+  type       String
+  receivedAt DateTime @default(now())
+  processed  Boolean  @default(false)
+}

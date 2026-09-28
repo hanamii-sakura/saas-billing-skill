@@ -5,40 +5,185 @@
   "type": "object",
   "additionalProperties": {
     "type": "object",
-    "required": ["id", "category", "priority", "title", "goal", "preconditions", "steps", "expected", "method"],
+    "required": [
+      "id",
+      "category",
+      "priority",
+      "title",
+      "goal",
+      "preconditions",
+      "steps",
+      "expected",
+      "method"
+    ],
     "properties": {
-      "id": { "type": "string", "pattern": "^[A-Z]+-[0-9]{3}$", "description": "例: BIL-001" },
-      "category": { "type": "string", "description": "テーマ。例: 初回契約 / 金額・日付 / 上限判定・追加枠 / 更新・カード失敗・再試行 / カード変更 / 解約・再契約 / クーポン / 第三者支払い / 旧来契約の除外 / 権限・領収書・計測 / Webhook・返金 / 実接続・運用 / 料金説明・ヘルプ / 運営画面 / 停止・削除の保護" },
-      "priority": { "type": "string", "enum": ["P0", "P1", "P2"] },
-      "title": { "type": "string" },
-      "goal": { "type": "string", "description": "何を確かめるか。否定条件（〜できないこと）も書く" },
-      "preconditions": { "type": "string" },
-      "setup": { "type": "array", "items": { "type": "string" } },
-      "testData": { "type": "array", "items": { "type": "string" }, "description": "テストカード番号、3DSの選択、境界値" },
-      "steps": { "type": "array", "items": { "type": "string" } },
-      "expected": { "type": "array", "items": { "type": "string" }, "description": "利用者に見える期待結果。失敗の形も書く" },
-      "developerChecks": { "type": "array", "items": { "type": "string" }, "description": "DBの行数や状態、実行する結合テスト" },
-      "cleanup": { "type": "array", "items": { "type": "string" } },
-      "method": { "type": "string", "enum": ["developer", "mixed", "browser"] },
+      "id": {
+        "type": "string",
+        "pattern": "^[A-Z]+-[0-9]{3}$",
+        "description": "例: BIL-001"
+      },
+      "category": {
+        "type": "string",
+        "description": "テーマ。例: 初回契約 / 金額・日付 / 上限判定・追加枠 / 更新・カード失敗・再試行 / カード変更 / 解約・再契約 / クーポン / 第三者支払い / 旧来契約の除外 / 権限・領収書・計測 / Webhook・返金 / 実接続・運用 / 料金説明・ヘルプ / 運営画面 / 停止・削除の保護"
+      },
+      "priority": {
+        "type": "string",
+        "enum": [
+          "P0",
+          "P1",
+          "P2"
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "goal": {
+        "type": "string",
+        "description": "何を確かめるか。否定条件（〜できないこと）も書く"
+      },
+      "preconditions": {
+        "type": "string"
+      },
+      "setup": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "testData": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "テストカード番号、3DSの選択、境界値"
+      },
+      "steps": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "expected": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "利用者に見える期待結果。失敗の形も書く"
+      },
+      "developerChecks": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "DBの行数や状態、実行する結合テスト"
+      },
+      "cleanup": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "method": {
+        "type": "string",
+        "enum": [
+          "developer",
+          "mixed",
+          "browser"
+        ]
+      },
+      "executability": {
+        "type": "string",
+        "enum": [
+          "executable_now",
+          "needs_setup",
+          "not_executable"
+        ],
+        "description": "台帳を作った時点で、いま実行できるか"
+      },
+      "needs": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "実行に足りないもの（シナリオCLI、時刻の注入口、PSPの実鍵、公開URL など）"
+      },
+      "codeReview": {
+        "type": "object",
+        "description": "既存コードに対して作るときだけ",
+        "properties": {
+          "prediction": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "unknown"
+            ],
+            "description": "いまのコードで通るか"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "codeRef": {
+            "type": "string",
+            "description": "ファイルと行。例: billing.service.ts:48-57"
+          }
+        }
+      },
       "manual": {
         "type": "object",
         "description": "人が手で実行した結果",
         "properties": {
-          "status": { "type": "string", "enum": ["未実施", "合格", "不合格", "保留", "要再テスト", "対象外"] },
-          "notes": { "type": "string" },
-          "at": { "type": "string", "format": "date-time" },
-          "by": { "type": "string" }
+          "status": {
+            "type": "string",
+            "enum": [
+              "未実施",
+              "合格",
+              "不合格",
+              "保留",
+              "要再テスト",
+              "対象外"
+            ]
+          },
+          "notes": {
+            "type": "string"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "by": {
+            "type": "string"
+          }
         }
       },
       "auto": {
         "type": "object",
         "description": "本物の環境での自動再現の結果",
         "properties": {
-          "status": { "type": "string", "enum": ["pass", "fail", "not_executable", "substitute"] },
-          "reason": { "type": "string", "description": "not_executable / substitute では必須。何が足りないか、どの層が担保するか" },
-          "at": { "type": "string", "format": "date-time" },
-          "runId": { "type": "string" },
-          "evidence": { "type": "string", "description": "証跡ディレクトリの相対パス" }
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "not_executable",
+              "substitute"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "description": "not_executable / substitute では必須。何が足りないか、どの層が担保するか"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "runId": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "string",
+            "description": "証跡ディレクトリの相対パス"
+          }
         }
       }
     }
