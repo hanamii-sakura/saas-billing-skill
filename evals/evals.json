@@ -1,0 +1,23 @@
+{
+  "skill_name": "saas-billing",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Next.js + Prisma + PostgreSQL で作っている自社の SaaS（チームで使うタスク管理ツール）に、Pay.jp で月額の有料プランを付けたい。無料プランはプロジェクト2本まで、有料は月額いくらかでプロジェクト無制限にする予定。設計方針と、実装前に決めておくべきことを整理して。決めるべきことは表にして、私が決めやすいように推奨と理由も書いて。",
+      "expected_output": "不変条件の列挙から始まり、権利と請求の分離、時計の区別、成否不明の扱い、督促・解約・返金など後半のライフサイクルを含む論点表（推奨と理由つき）、未決の一覧",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "うちの SaaS の課金で、解約と支払い失敗まわりの仕様がまだ曖昧。カード決済（Stripe）で月額課金。決済に失敗したら何日待って、いつ機能を止めて、いつデータを消すのか。解約はいつ効くのか。それを利用規約にどう書くのか。仕様と規約の両方の案を出して。",
+      "expected_output": "past_due→restricted→suspended→ended の段階と日数一覧、成否不明を失敗扱いしない、解約は期末で返金なし、規約には日数を書かず解約と解除を書き分け、カード前払いは売掛金にならない、決めるべき問いQ1〜Q4",
+      "files": ["billing-context.md"]
+    },
+    {
+      "id": 3,
+      "prompt": "添付の Prisma スキーマと課金サービスのコードに対して、テストケースの一覧を作って。手動でも自動でも使える形で、JSON にして。優先度も付けて。",
+      "expected_output": "テーマ別（初回契約・金額日付・更新失敗再試行・解約・Webhook など）のケースを台帳のスキーマ（id/category/priority/title/goal/preconditions/steps/expected/developerChecks/method）で出し、否定条件と同時実行のケースを含み、結果区分に substitute/not_executable がある",
+      "files": ["schema.prisma", "billing.service.ts"]
+    }
+  ]
+}
